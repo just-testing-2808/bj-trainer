@@ -1,0 +1,9 @@
+This folder is reserved for optional generated assets.
+
+Currently all visuals (dealer figure, cards, casino background) are
+built with pure HTML, CSS and inline SVG – no external image files needed.
+
+Future assets could include:
+- Sound effects (card deal, win, chip click)
+- Custom font subsets
+- Favicon / app icon variants
