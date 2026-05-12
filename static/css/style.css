@@ -1371,47 +1371,165 @@ body {
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ═══════════════════════════════════════════════════════════
-   RESPONSIVE – MOBILE LANDSCAPE
+   RESPONSIVE – MOBILE LANDSCAPE  (max-height 500px)
+   Target: iPhone landscape, small Android landscape
+   Available height ≈ 300–420px after browser chrome
 ═══════════════════════════════════════════════════════════ */
 @media (max-height: 500px) and (orientation: landscape) {
   :root {
-    --topbar-h:  38px;
-    --bottom-h:  36px;
+    --topbar-h: 36px;
+    --bottom-h: 32px;
   }
 
+  /* ── Dealer: smaller, pushed up behind table ── */
   .dealer-figure-wrap {
-    width: clamp(80px, 10vw, 120px);
+    width: clamp(70px, 9vw, 110px);
+    top: calc(var(--topbar-h) - 4px);
   }
 
+  /* ── Table: fill available vertical space exactly ── */
   .table-scene {
-    height: clamp(240px, 78vh, 500px);
+    height: calc(100vh - var(--topbar-h) - var(--bottom-h) - 2px);
+    bottom: var(--bottom-h);
+    /* override the large clamp minimum */
+    min-height: 0;
   }
 
-  .game-content { gap: 2px; padding-top: 4px; }
+  /* ── Table decorations: hide to save space + avoid clutter ── */
+  .card-shoe   { display: none; }
+  .table-text  { display: none; }
 
+  /* ── Game content: tight vertical stacking ── */
+  .game-content {
+    padding-top: 3px;
+    gap: 3px;
+    justify-content: flex-start;
+  }
+
+  /* ── Hand labels ── */
+  .hand-label { font-size: 7px; letter-spacing: 0.06em; }
+  .hand-label-row { gap: 5px; }
+  .dealer-hand-area { gap: 2px; }
+
+  /* ── Cards: noticeably smaller ── */
+  .cards-container { min-height: 48px; gap: -2px; }
+  .card {
+    width:  clamp(34px, 5vw, 50px);
+    height: clamp(50px, 7vh,  72px);
+    padding: 2px;
+    border-radius: 5px;
+  }
+  .c-rank           { font-size: clamp(8px, 1.1vw, 12px); }
+  .c-suit           { font-size: clamp(6px, 0.9vw, 10px); }
+  .card-center-suit { font-size: clamp(14px, 2vw,   22px); }
+  .score-badge {
+    min-width: 22px; height: 17px;
+    font-size: 9px;  padding: 0 4px;
+    border-radius: 4px;
+  }
+
+  /* ── Action buttons ── */
+  .action-buttons { gap: clamp(8px, 1.4vw, 16px); }
   .action-btn {
-    width:  clamp(40px, 7vw, 60px);
-    height: clamp(40px, 7vw, 60px);
+    width:  clamp(40px, 6.2vw, 58px);
+    height: clamp(40px, 6.2vw, 58px);
   }
+  .btn-icon { font-size: clamp(16px, 2.4vw, 28px); }
+  .btn-lbl  { font-size: 7px; letter-spacing: 0.02em; }
 
+  /* ── Status bar ── */
+  .status-bar { height: 24px; width: clamp(160px, 38vw, 380px); }
+  #statusText { font-size: 9px; letter-spacing: 0.06em; }
+
+  /* ── Player hands ── */
+  .player-hands-area { gap: 10px; }
+
+  /* ── Side bets + chip row ── */
+  .sidebets-area { gap: clamp(8px, 1.8vw, 22px); padding: 0 1%; }
   .sidebet {
-    width:  clamp(38px, 6vw, 60px);
-    height: clamp(38px, 6vw, 60px);
+    width:  clamp(36px, 5.5vw, 54px);
+    height: clamp(36px, 5.5vw, 54px);
   }
+  .sidebet-label { font-size: 6.5px; line-height: 1.25; }
 
+  /* ── Chip ── */
+  .bet-area    { gap: 7px; }
   .chip {
-    width:  clamp(44px, 7vw, 68px);
-    height: clamp(44px, 7vw, 68px);
+    width:  clamp(40px, 6.5vw, 60px);
+    height: clamp(40px, 6.5vw, 60px);
+  }
+  .chip-inner  { border-width: 3px; }
+  .chip-amount { font-size: clamp(8px, 1.2vw, 14px); }
+  .arrow-btn   { width: 27px; height: 27px; }
+  .bet-info    { gap: 1px; }
+  .bet-info-label  { font-size: 6.5px; }
+  .bet-info-amount { font-size: 8px; }
+  .chip-wrap   { gap: 2px; }
+
+  /* ── Bottom panels ── */
+  .bottom-panel {
+    padding: 3px 10px;
+    min-width: 90px;
+    gap: 5px;
+  }
+  .panel-value   { font-size: 10px; }
+  .panel-label   { font-size: 6.5px; }
+  .panel-icon    { width: 14px; height: 14px; }
+  .panel-chevron { display: none; }
+
+  /* ── Background ── */
+  .bg-panel-group { width: 18%; }
+  .bg-octa { width: clamp(60px, 10vw, 110px); height: clamp(60px, 10vw, 110px); }
+
+  /* ── Side panels ── */
+  .side-panel { width: clamp(240px, 42vw, 340px); }
+  .info-panel { padding: 5px 10px; }
+  .count-grid { gap: 2px 8px; }
+  .learn-panel { top: calc(var(--topbar-h) + 4px); }
+
+  /* ── Title bar ── */
+  .title-main   { font-size: clamp(12px, 2vw, 18px); }
+  .title-limits { font-size: clamp(7px, 0.9vw, 10px); }
+  .icon-btn {
+    width:  clamp(28px, 4vw, 38px);
+    height: clamp(28px, 4vw, 38px);
   }
 
-  .bg-panel-group { width: 20%; }
-  .bg-octa        { width: clamp(70px, 12vw, 130px); height: clamp(70px, 12vw, 130px); }
+  /* ── Reduce table rim / padding so felt is taller ── */
+  .table-outer {
+    padding: 7px 7px 0;
+    border-radius: 50% 50% 0 0 / 68% 68% 0 0;
+  }
+  .table-gold-rim {
+    padding: 3px 3px 0;
+    border-radius: 50% 50% 0 0 / 68% 68% 0 0;
+  }
+  .table-felt {
+    border-radius: 50% 50% 0 0 / 68% 68% 0 0;
+  }
 
-  .status-bar { height: 28px; width: clamp(160px, 38vw, 360px); }
+  /* ── Player hand: tighter vertical spacing ── */
+  .player-hand { gap: 2px; }
 
-  .side-panel { width: clamp(240px, 40vw, 320px); }
-  .info-panel { padding: 6px 10px; }
-  .count-grid { gap: 2px 8px; }
+  /* ── Score badge next to cards instead of below ── */
+  .player-hands-area .player-hand {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .player-hands-area .player-hand .hand-label {
+    width: 100%;
+    text-align: center;
+  }
+  .player-hands-area .player-hand > .score-badge {
+    align-self: center;
+    margin-left: 4px;
+  }
+
+  /* ── Table scene: never narrower than viewport ── */
+  .table-scene { width: max(96vw, 300px); }
 }
 
 /* Tablet landscape */
