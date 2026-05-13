@@ -409,7 +409,7 @@ document.getElementById('refreshBtn').addEventListener('click', () => {
 });
 
 function clearCards() {
-  state.dealerHand = []; state.playerHands = [[[]]; state.dealerHoleVisible = false;
+  state.dealerHand = []; state.playerHands = [[]]; state.dealerHoleVisible = false;
   const dc = document.getElementById('dealerCards');
   const pa = document.getElementById('playerHandsArea');
   if (dc) { dc.innerHTML = ''; dc.dataset.renderKey = ''; }
