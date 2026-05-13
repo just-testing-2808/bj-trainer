@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Blackjack Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     ROTATE OVERLAY (portrait)
+═══════════════════════════════════════════════════════ -->
+<div id="rotateOverlay" class="rotate-overlay">
+  <div class="rotate-content">
+    <div class="rotate-icon">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="28" y="10" width="44" height="80" rx="7" stroke="#c8a035" stroke-width="4"/>
+        <circle cx="50" cy="78" r="4" fill="#c8a035"/>
+        <path d="M70 50 L90 50 M82 43 L90 50 L82 57" stroke="#c8a035" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="rotate-arrow" d="M28 50 C28 30 52 15 72 28" stroke="#c8a035" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <h2>Bitte drehe dein Gerät</h2>
+    <p>Dieses Blackjack-Erlebnis ist für Querformat optimiert.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN GAME
+═══════════════════════════════════════════════════════ -->
+<div id="game" class="game">
+
+  <!-- ── CASINO STUDIO BACKGROUND ── -->
+  <div class="casino-bg" aria-hidden="true">
+    <div class="bg-wall"></div>
+
+    <!-- Left panel cluster -->
+    <div class="bg-panel-group left">
+      <div class="bg-octa"><div class="bg-octa-inner"></div></div>
+      <div class="vlight left-l1"></div>
+      <div class="vlight left-l2"></div>
+    </div>
+
+    <!-- Right panel cluster -->
+    <div class="bg-panel-group right">
+      <div class="bg-octa"><div class="bg-octa-inner"></div></div>
+      <div class="vlight right-l1"></div>
+      <div class="vlight right-l2"></div>
+    </div>
+
+    <!-- Center back wall -->
+    <div class="bg-center-panel">
+      <div class="bg-sign">
+        <div class="sign-suits">♠ ♦ ♣</div>
+        <div class="sign-hr"></div>
+        <div class="sign-title">BLACKJACK</div>
+        <div class="sign-hr"></div>
+        <div class="sign-live">LIVE</div>
+        <div class="sign-dot"></div>
+      </div>
+    </div>
+
+    <!-- Floor glow -->
+    <div class="bg-floor-glow"></div>
+  </div>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menü">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <div class="title-block">
+        <span class="title-main">BLACKJACK LIVE</span>
+        <span class="title-limits">1 € – 25.000 €</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="refreshBtn" title="Neue Runde / Reset">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+      <button class="icon-btn" id="helpBtn" title="Hilfe">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Einstellungen">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+      <button class="icon-btn" id="soundBtn" title="Sound">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── DEALER FIGURE ── -->
+  <div class="dealer-figure-wrap" aria-label="Dealer">
+    <svg class="dealer-svg" viewBox="0 0 260 360" xmlns="http://www.w3.org/2000/svg">
+      <!-- Shadow -->
+      <ellipse cx="130" cy="348" rx="55" ry="10" fill="rgba(0,0,0,0.45)"/>
+      <!-- Jacket body -->
+      <path d="M60 185 Q52 210 46 300 L86 304 Q88 268 92 235 L92 182 Z" fill="#111"/>
+      <path d="M200 185 Q208 210 214 300 L174 304 Q172 268 168 235 L168 182 Z" fill="#111"/>
+      <path d="M88 180 L92 265 L168 265 L172 180 Q148 195 130 195 Q112 195 88 180 Z" fill="#1a1a1a"/>
+      <!-- White shirt / décolleté -->
+      <path d="M105 168 L130 190 L155 168 L148 156 Q130 163 112 156 Z" fill="#f0ece8"/>
+      <!-- Bow tie -->
+      <path d="M116 172 L130 180 L116 188 Z" fill="#7a0000"/>
+      <path d="M144 172 L130 180 L144 188 Z" fill="#7a0000"/>
+      <ellipse cx="130" cy="180" rx="5" ry="5" fill="#600"/>
+      <!-- Neck -->
+      <path d="M116 152 Q114 170 118 172 L142 172 Q146 170 144 152 Z" fill="#cb8b64"/>
+      <!-- Head -->
+      <ellipse cx="130" cy="112" rx="43" ry="48" fill="#d4956b"/>
+      <!-- Hair – top and sides -->
+      <path d="M87 96 Q88 58 130 54 Q172 58 173 96 Q160 72 130 70 Q100 72 87 96 Z" fill="#1e1007"/>
+      <path d="M87 96 Q76 118 78 146 Q84 160 91 159 Q83 144 87 122 Z" fill="#1e1007"/>
+      <path d="M173 96 Q184 118 182 146 Q176 160 169 159 Q177 144 173 122 Z" fill="#1e1007"/>
+      <path d="M87 100 Q92 80 130 78 Q168 80 173 100 Q162 85 130 83 Q98 85 87 100 Z" fill="#2d1a0a"/>
+      <!-- Ear -->
+      <ellipse cx="88" cy="120" rx="7" ry="10" fill="#cc8560"/>
+      <ellipse cx="172" cy="120" rx="7" ry="10" fill="#cc8560"/>
+      <!-- Eye whites -->
+      <ellipse cx="113" cy="110" rx="8" ry="9" fill="white"/>
+      <ellipse cx="147" cy="110" rx="8" ry="9" fill="white"/>
+      <!-- Irises -->
+      <ellipse cx="113" cy="110" rx="5" ry="6" fill="#3e2b1a"/>
+      <ellipse cx="147" cy="110" rx="5" ry="6" fill="#3e2b1a"/>
+      <!-- Pupils -->
+      <ellipse cx="113" cy="110" rx="2.5" ry="3" fill="#0a0605"/>
+      <ellipse cx="147" cy="110" rx="2.5" ry="3" fill="#0a0605"/>
+      <!-- Eye highlights -->
+      <circle cx="115" cy="108" r="1.8" fill="white" opacity="0.9"/>
+      <circle cx="149" cy="108" r="1.8" fill="white" opacity="0.9"/>
+      <!-- Eyebrows -->
+      <path d="M104 100 Q113 96 122 100" stroke="#1e1007" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M138 100 Q147 96 156 100" stroke="#1e1007" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Nose bridge -->
+      <path d="M126 120 Q130 130 134 120" stroke="#b87450" stroke-width="1.5" fill="none"/>
+      <path d="M122 128 Q130 134 138 128" stroke="#b87450" stroke-width="1.5" fill="none"/>
+      <!-- Lips -->
+      <path d="M112 141 Q130 152 148 141 Q140 136 130 137 Q120 136 112 141 Z" fill="#c06870"/>
+      <path d="M112 141 Q121 146 130 144 Q139 146 148 141" stroke="#a05060" stroke-width="1" fill="none"/>
+      <!-- Cheek blush -->
+      <ellipse cx="100" cy="125" rx="10" ry="6" fill="#d4756a" opacity="0.3"/>
+      <ellipse cx="160" cy="125" rx="10" ry="6" fill="#d4756a" opacity="0.3"/>
+      <!-- Gold earrings -->
+      <circle cx="87" cy="124" r="5" fill="#c8a035" opacity="0.9"/>
+      <circle cx="173" cy="124" r="5" fill="#c8a035" opacity="0.9"/>
+      <!-- Jacket lapels -->
+      <path d="M88 182 L105 160 L118 182" fill="#222"/>
+      <path d="M172 182 L155 160 L142 182" fill="#222"/>
+      <!-- Arms resting on table -->
+      <path d="M48 268 Q44 274 48 282 L112 284 Q107 273 108 262 Z" fill="#1a1a1a"/>
+      <path d="M212 268 Q216 274 212 282 L148 284 Q153 273 152 262 Z" fill="#1a1a1a"/>
+      <!-- Hands / wrists -->
+      <ellipse cx="80" cy="283" rx="28" ry="13" fill="#d4956b"/>
+      <ellipse cx="180" cy="283" rx="28" ry="13" fill="#d4956b"/>
+      <!-- Finger hints -->
+      <path d="M58 278 Q52 274 50 280 Q52 286 58 287" fill="#c4855b"/>
+      <path d="M60 270 Q53 264 50 271 Q50 278 60 280" fill="#c4855b"/>
+      <path d="M202 278 Q208 274 210 280 Q208 286 202 287" fill="#c4855b"/>
+      <path d="M200 270 Q207 264 210 271 Q210 278 200 280" fill="#c4855b"/>
+      <!-- Gold bracelet hint -->
+      <path d="M100 283 Q112 287 124 283" stroke="#c8a035" stroke-width="2" fill="none" opacity="0.7"/>
+      <path d="M136 283 Q148 287 160 283" stroke="#c8a035" stroke-width="2" fill="none" opacity="0.7"/>
+    </svg>
+    <!-- Ambient dealer glow -->
+    <div class="dealer-glow"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TABLE
+  ══════════════════════════════════════════ -->
+  <div class="table-scene">
+
+    <!-- Table outer (red rim) -->
+    <div class="table-outer">
+      <!-- Gold inner line -->
+      <div class="table-gold-rim">
+        <!-- Felt surface -->
+        <div class="table-felt">
+
+          <!-- Card Shoe LEFT -->
+          <div class="card-shoe shoe-left" aria-hidden="true">
+            <div class="shoe-body">
+              <div class="shoe-cards">
+                <div class="shoe-card"></div>
+                <div class="shoe-card"></div>
+                <div class="shoe-card"></div>
+              </div>
+              <div class="shoe-slot"></div>
+            </div>
+          </div>
+
+          <!-- Card Shoe RIGHT -->
+          <div class="card-shoe shoe-right" aria-hidden="true">
+            <div class="shoe-body">
+              <div class="shoe-cards">
+                <div class="shoe-card"></div>
+                <div class="shoe-card"></div>
+                <div class="shoe-card"></div>
+              </div>
+              <div class="shoe-slot"></div>
+            </div>
+          </div>
+
+          <!-- Table text LEFT -->
+          <div class="table-text table-text-left" aria-hidden="true">
+            <span>BLACKJACK PAYS 3 TO 2</span>
+            <span>6 PLAYER CARDS WIN</span>
+          </div>
+
+          <!-- Table text RIGHT -->
+          <div class="table-text table-text-right" aria-hidden="true">
+            <span>DEALER MUST DRAW TO 16</span>
+            <span>AND STAND ON ALL 17'S</span>
+          </div>
+
+          <!-- ─── GAME CONTENT ─── -->
+          <div class="game-content">
+
+            <!-- Dealer Hand -->
+            <div class="dealer-hand-area">
+              <div class="hand-label-row">
+                <span class="hand-label">DEALER HAND</span>
+                <div class="score-badge hidden-empty" id="dealerScore"></div>
+              </div>
+              <div class="cards-container" id="dealerCards"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons" id="actionButtons">
+              <button class="action-btn btn-double" id="btnDouble" disabled>
+                <span class="btn-icon">2×</span>
+                <span class="btn-lbl">DOUBLE</span>
+              </button>
+              <button class="action-btn btn-hit" id="btnHit" disabled>
+                <span class="btn-icon">+</span>
+                <span class="btn-lbl">HIT</span>
+              </button>
+              <button class="action-btn btn-stand" id="btnStand" disabled>
+                <span class="btn-icon">−</span>
+                <span class="btn-lbl">STAND</span>
+              </button>
+              <button class="action-btn btn-split" id="btnSplit" disabled>
+                <span class="btn-icon">↔</span>
+                <span class="btn-lbl">SPLIT</span>
+              </button>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar" id="statusBar">
+              <span id="statusText">PLACE YOUR BETS</span>
+            </div>
+
+            <!-- Player Hands -->
+            <div class="player-hands-area" id="playerHandsArea"></div>
+
+            <!-- Side Bets -->
+            <div class="sidebets-area">
+              <div class="sidebet" data-bet="twentyOnePlusThree" id="sidebet-21plus3">
+                <span class="sidebet-label">21+3</span>
+              </div>
+              <div class="sidebet" data-bet="bustBonus" id="sidebet-bust">
+                <span class="sidebet-label">BUST<br>BONUS</span>
+              </div>
+
+              <!-- Bet Area – chip tray + placed bet + deal button -->
+              <div class="bet-area">
+                <div class="bet-display-wrap">
+                  <div class="bet-display-label">EINSATZ</div>
+                  <div class="bet-display-amount" id="betAmount">0,00 €</div>
+                  <button class="clear-bet-btn" id="clearBetBtn">CLEAR</button>
+                </div>
+                <div class="chip-tray" id="chipTray">
+                  <button class="tray-chip chip-c1"   data-amount="1"    aria-label="1€ Chip"><span>1€</span></button>
+                  <button class="tray-chip chip-c5"   data-amount="5"    aria-label="5€ Chip"><span>5€</span></button>
+                  <button class="tray-chip chip-c25"  data-amount="25"   aria-label="25€ Chip"><span>25€</span></button>
+                  <button class="tray-chip chip-c50"  data-amount="50"   aria-label="50€ Chip"><span>50€</span></button>
+                  <button class="tray-chip chip-c100" data-amount="100"  aria-label="100€ Chip"><span>100€</span></button>
+                  <button class="tray-chip chip-c250" data-amount="250"  aria-label="250€ Chip"><span>250€</span></button>
+                  <button class="tray-chip chip-c500" data-amount="500"  aria-label="500€ Chip"><span>500€</span></button>
+                  <button class="tray-chip chip-c1k"  data-amount="1000" aria-label="1000€ Chip"><span>1K€</span></button>
+                </div>
+                <button class="deal-btn" id="dealBtn" disabled>DEAL</button>
+              </div>
+
+              <div class="sidebet" data-bet="perfectPairs" id="sidebet-pairs">
+                <span class="sidebet-label">PERFECT<br>PAIRS</span>
+              </div>
+              <div class="sidebet" data-bet="crazySeven" id="sidebet-seven">
+                <span class="sidebet-label">CRAZY<br>7</span>
+              </div>
+            </div>
+
+          </div><!-- /game-content -->
+        </div><!-- /table-felt -->
+      </div><!-- /table-gold-rim -->
+    </div><!-- /table-outer -->
+  </div><!-- /table-scene -->
+
+  <!-- ── BOTTOM PANELS ── -->
+  <div class="bottom-panels">
+    <div class="bottom-panel panel-left">
+      <svg class="panel-icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9" fill="none" stroke="#c8a035" stroke-width="1.5"/><circle cx="12" cy="12" r="5" fill="#c8a035" opacity="0.6"/><path d="M12 7v10M7 12h10" stroke="#c8a035" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="panel-info">
+        <span class="panel-label">BALANCE</span>
+        <span class="panel-value" id="balanceDisplay">1.000,00 €</span>
+      </div>
+      <svg class="panel-chevron" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+    </div>
+
+    <div class="bottom-panel panel-right">
+      <div class="panel-info">
+        <span class="panel-label">LAST WIN</span>
+        <span class="panel-value" id="lastWinDisplay">0,00 €</span>
+      </div>
+      <svg class="panel-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SIDE PANELS
+  ══════════════════════════════════════════ -->
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="side-panel" role="dialog" aria-label="Einstellungen">
+    <div class="panel-header">
+      <h2>⚙ Einstellungen</h2>
+      <button class="close-btn" onclick="document.getElementById('settingsPanel').classList.remove('open')" aria-label="Schließen">✕</button>
+    </div>
+    <div class="panel-body">
+      <section class="settings-section">
+        <h3>Analyse-Tools</h3>
+        <label class="toggle-row">
+          <span>Lernmodus (Basic Strategy)</span>
+          <div class="toggle-wrap"><input type="checkbox" id="chkLearning"><span class="toggle-slider"></span></div>
+        </label>
+        <label class="toggle-row">
+          <span>Card-Counting-Panel</span>
+          <div class="toggle-wrap"><input type="checkbox" id="chkCounting"><span class="toggle-slider"></span></div>
+        </label>
+        <label class="toggle-row">
+          <span>Wahrscheinlichkeiten</span>
+          <div class="toggle-wrap"><input type="checkbox" id="chkProbability"><span class="toggle-slider"></span></div>
+        </label>
+      </section>
+
+      <section class="settings-section">
+        <h3>Einsatzstrategie</h3>
+        <div class="strategy-buttons" id="strategyButtons">
+          <button class="strat-btn" data-val="manual" onclick="selectStrategy(this)">Manuell</button>
+          <button class="strat-btn" data-val="flat" onclick="selectStrategy(this)">Flat Bet</button>
+          <button class="strat-btn" data-val="martingale" onclick="selectStrategy(this)">Martingale</button>
+          <button class="strat-btn" data-val="trueCount" onclick="selectStrategy(this)">True Count</button>
+        </div>
+        <input type="hidden" id="selStrategy" value="manual">
+      </section>
+
+      <section class="settings-section">
+        <h3>Einsatzlimits</h3>
+        <div class="input-row">
+          <label>Basiseinsatz €</label>
+          <input type="number" id="inputBaseBet" value="10" min="1" step="0.5" class="casino-input">
+        </div>
+        <div class="input-row">
+          <label>Tischminimum €</label>
+          <input type="number" id="inputMinBet" value="2.5" min="0.5" step="0.5" class="casino-input">
+        </div>
+        <div class="input-row">
+          <label>Tischmaximum €</label>
+          <input type="number" id="inputMaxBet" value="25000" min="100" step="100" class="casino-input">
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Anzahl Decks</h3>
+        <div class="deck-selector" id="deckSelector">
+          <button class="deck-btn" data-decks="1">1</button>
+          <button class="deck-btn" data-decks="2">2</button>
+          <button class="deck-btn" data-decks="3">3</button>
+          <button class="deck-btn" data-decks="4">4</button>
+          <button class="deck-btn" data-decks="5">5</button>
+          <button class="deck-btn active" data-decks="6">6</button>
+        </div>
+        <p class="settings-note">Wirkt beim nächsten Shoe-Mischen</p>
+      </section>
+
+      <section class="settings-section">
+        <h3>Aktionen</h3>
+        <button class="casino-btn btn-secondary" id="btnNewShoe">🔀 Neues Shoe (<span id="newShoeLabel">6</span> Decks)</button>
+        <button class="casino-btn btn-danger" id="btnResetGame">↺ Spiel zurücksetzen</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- Help Panel -->
+  <div id="helpPanel" class="side-panel" role="dialog" aria-label="Hilfe">
+    <div class="panel-header">
+      <h2>? Hilfe</h2>
+      <button class="close-btn" onclick="document.getElementById('helpPanel').classList.remove('open')" aria-label="Schließen">✕</button>
+    </div>
+    <div class="panel-body">
+      <section class="help-section">
+        <h3>Ziel des Spiels</h3>
+        <p>Komme mit deinen Karten näher an 21 als der Dealer, ohne 21 zu überschreiten (Bust).</p>
+      </section>
+      <section class="help-section">
+        <h3>Aktionen</h3>
+        <dl class="help-dl">
+          <dt><span class="tag tag-hit">HIT</span></dt>
+          <dd>Eine weitere Karte ziehen.</dd>
+          <dt><span class="tag tag-stand">STAND</span></dt>
+          <dd>Keine weitere Karte. Dealer ist dran.</dd>
+          <dt><span class="tag tag-double">DOUBLE</span></dt>
+          <dd>Einsatz verdoppeln, genau eine Karte mehr, dann automatisch Stand.</dd>
+          <dt><span class="tag tag-split">SPLIT</span></dt>
+          <dd>Zwei gleiche Karten aufteilen und als zwei Hände weiterspielen.</dd>
+        </dl>
+      </section>
+      <section class="help-section">
+        <h3>Regeln</h3>
+        <ul class="help-list">
+          <li>Blackjack (Ass + Zehner) zahlt <strong>3:2</strong>.</li>
+          <li>Dealer zieht bei 16 oder weniger, steht auf allen 17.</li>
+          <li>Push bei Gleichstand – Einsatz zurück.</li>
+          <li>1–6 Decks im Shoe (einstellbar).</li>
+        </ul>
+      </section>
+      <section class="help-section">
+        <h3>Profi-Tools</h3>
+        <p>Aktiviere <strong>Lernmodus</strong>, <strong>Card Counting</strong> und <strong>Wahrscheinlichkeiten</strong> in den Einstellungen ⚙.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Counting Panel -->
+  <div id="countingPanel" class="info-panel counting-panel" style="display:none">
+    <div class="info-panel-title">🃏 Card Count</div>
+    <div class="count-grid">
+      <span>Running Count</span><span id="cpRunning" class="count-value">0</span>
+      <span>True Count</span><span id="cpTrue" class="count-value">0</span>
+      <span>Karten übrig</span><span id="cpCards" class="count-value">-</span>
+      <span>Decks übrig</span><span id="cpDecks" class="count-value">-</span>
+      <span>High Cards ♠</span><span id="cpHigh" class="count-value">-</span>
+      <span>Low Cards ♦</span><span id="cpLow" class="count-value">-</span>
+      <span>Asse ♥</span><span id="cpAces" class="count-value">-</span>
+    </div>
+  </div>
+
+  <!-- Probability Panel -->
+  <div id="probabilityPanel" class="info-panel prob-panel" style="display:none">
+    <div class="info-panel-title">📊 Wahrscheinlichkeiten</div>
+    <div class="count-grid">
+      <span>Bust bei Hit</span><span id="probBust" class="count-value">-</span>
+      <span>21 bei Hit</span><span id="prob21" class="count-value">-</span>
+      <span>Dealer Bust</span><span id="probDealerBust" class="count-value">-</span>
+      <span>10er übrig</span><span id="probTens" class="count-value">-</span>
+      <span>Asse übrig</span><span id="probAces" class="count-value">-</span>
+    </div>
+  </div>
+
+  <!-- Learning Panel -->
+  <div id="learningPanel" class="info-panel learn-panel" style="display:none">
+    <div class="info-panel-title">🎓 Basic Strategy</div>
+    <div class="learn-content">
+      <div id="learnAction" class="learn-action">-</div>
+      <div id="learnReason" class="learn-reason">Warte auf Karten...</div>
+    </div>
+  </div>
+
+  <!-- Overlay backdrop -->
+  <div id="panelBackdrop" class="panel-backdrop"></div>
+
+  <!-- Insurance Modal -->
+  <div id="insuranceModal" class="insurance-modal" style="display:none">
+    <div class="insurance-box">
+      <div class="insurance-title">VERSICHERUNG?</div>
+      <div class="insurance-sub">Dealer zeigt ein Ass. Versicherung kostet die Hälfte des Einsatzes und zahlt 2:1.</div>
+      <div class="insurance-amount" id="insuranceAmount"></div>
+      <div class="insurance-btns">
+        <button class="ins-btn ins-yes" id="btnInsuranceYes">JA – Versichern</button>
+        <button class="ins-btn ins-no"  id="btnInsuranceNo">NEIN – Kein Risiko</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win Popup Overlay -->
+  <div id="winPopup" class="win-popup" style="display:none">
+    <div class="win-popup-inner">
+      <div class="win-trophy">🏆</div>
+      <div class="win-title">GEWONNEN!</div>
+      <div class="win-amount" id="winAmount"></div>
+      <div class="win-breakdown" id="winBreakdown" style="display:none"></div>
+      <div class="win-sub">Klicken um fortzufahren</div>
+    </div>
+  </div>
+
+  <!-- BJ Win Popup -->
+  <div id="bjPopup" class="win-popup bj-popup" style="display:none">
+    <div class="win-popup-inner">
+      <div class="win-trophy">⭐</div>
+      <div class="win-title">BLACKJACK!</div>
+      <div class="win-amount" id="bjAmount"></div>
+      <div class="win-breakdown" id="bjBreakdown" style="display:none"></div>
+      <div class="win-sub">3:2 Auszahlung</div>
+    </div>
+  </div>
+
+  <!-- Game Toast (push/lose) -->
+  <div id="gameToast" class="game-toast" style="display:none"></div>
+
+</div><!-- /game -->
+
+<script>
+// Strategy button helper (called inline from HTML)
+function selectStrategy(btn) {
+  document.querySelectorAll('.strat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('selStrategy').value = btn.dataset.val;
+  // dispatch change event so main.js picks it up
+  document.getElementById('selStrategy').dispatchEvent(new Event('change'));
+}
+// Set initial active button
+window.addEventListener('DOMContentLoaded', () => {
+  const active = document.querySelector('.strat-btn[data-val="manual"]');
+  if (active) active.classList.add('active');
+});
+</script>
+
+<script type="module" src="static/js/main.js"></script>
+</body>
+</html>
