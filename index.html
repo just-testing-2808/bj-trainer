@@ -74,7 +74,7 @@
       </button>
       <div class="title-block">
         <span class="title-main">BLACKJACK LIVE</span>
-        <span class="title-limits">2,50 € – 25.000 €</span>
+        <span class="title-limits">1 € – 25.000 €</span>
       </div>
     </div>
     <div class="topbar-right">
@@ -266,25 +266,24 @@
                 <span class="sidebet-label">BUST<br>BONUS</span>
               </div>
 
-              <!-- Chip / Bet Area – center of side bets row -->
+              <!-- Bet Area – chip tray + placed bet + deal button -->
               <div class="bet-area">
-                <button class="arrow-btn" id="decreaseBet" aria-label="Einsatz verringern">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                </button>
-                <div class="chip-wrap">
-                  <div class="chip" id="mainChip" role="button" tabindex="0" aria-label="Deal / Neue Runde">
-                    <div class="chip-inner">
-                      <span class="chip-amount" id="chipAmount">10€</span>
-                    </div>
-                  </div>
-                  <div class="bet-info">
-                    <span class="bet-info-label">CURRENT BET</span>
-                    <span class="bet-info-amount" id="betAmount">10,00 €</span>
-                  </div>
+                <div class="bet-display-wrap">
+                  <div class="bet-display-label">EINSATZ</div>
+                  <div class="bet-display-amount" id="betAmount">0,00 €</div>
+                  <button class="clear-bet-btn" id="clearBetBtn">CLEAR</button>
                 </div>
-                <button class="arrow-btn" id="increaseBet" aria-label="Einsatz erhöhen">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                </button>
+                <div class="chip-tray" id="chipTray">
+                  <button class="tray-chip chip-c1"   data-amount="1"    aria-label="1€ Chip"><span>1€</span></button>
+                  <button class="tray-chip chip-c5"   data-amount="5"    aria-label="5€ Chip"><span>5€</span></button>
+                  <button class="tray-chip chip-c25"  data-amount="25"   aria-label="25€ Chip"><span>25€</span></button>
+                  <button class="tray-chip chip-c50"  data-amount="50"   aria-label="50€ Chip"><span>50€</span></button>
+                  <button class="tray-chip chip-c100" data-amount="100"  aria-label="100€ Chip"><span>100€</span></button>
+                  <button class="tray-chip chip-c250" data-amount="250"  aria-label="250€ Chip"><span>250€</span></button>
+                  <button class="tray-chip chip-c500" data-amount="500"  aria-label="500€ Chip"><span>500€</span></button>
+                  <button class="tray-chip chip-c1k"  data-amount="1000" aria-label="1000€ Chip"><span>1K€</span></button>
+                </div>
+                <button class="deal-btn" id="dealBtn" disabled>DEAL</button>
               </div>
 
               <div class="sidebet" data-bet="perfectPairs" id="sidebet-pairs">
@@ -376,8 +375,21 @@
       </section>
 
       <section class="settings-section">
+        <h3>Anzahl Decks</h3>
+        <div class="deck-selector" id="deckSelector">
+          <button class="deck-btn" data-decks="1">1</button>
+          <button class="deck-btn" data-decks="2">2</button>
+          <button class="deck-btn" data-decks="3">3</button>
+          <button class="deck-btn" data-decks="4">4</button>
+          <button class="deck-btn" data-decks="5">5</button>
+          <button class="deck-btn active" data-decks="6">6</button>
+        </div>
+        <p class="settings-note">Wirkt beim nächsten Shoe-Mischen</p>
+      </section>
+
+      <section class="settings-section">
         <h3>Aktionen</h3>
-        <button class="casino-btn btn-secondary" id="btnNewShoe">🔀 Neues Shoe mischen</button>
+        <button class="casino-btn btn-secondary" id="btnNewShoe">🔀 Neues Shoe (<span id="newShoeLabel">6</span> Decks)</button>
         <button class="casino-btn btn-danger" id="btnResetGame">↺ Spiel zurücksetzen</button>
       </section>
     </div>
@@ -413,7 +425,7 @@
           <li>Blackjack (Ass + Zehner) zahlt <strong>3:2</strong>.</li>
           <li>Dealer zieht bei 16 oder weniger, steht auf allen 17.</li>
           <li>Push bei Gleichstand – Einsatz zurück.</li>
-          <li>6 Decks im Shoe.</li>
+          <li>1–6 Decks im Shoe (einstellbar).</li>
         </ul>
       </section>
       <section class="help-section">
@@ -460,6 +472,42 @@
 
   <!-- Overlay backdrop -->
   <div id="panelBackdrop" class="panel-backdrop"></div>
+
+  <!-- Insurance Modal -->
+  <div id="insuranceModal" class="insurance-modal" style="display:none">
+    <div class="insurance-box">
+      <div class="insurance-title">VERSICHERUNG?</div>
+      <div class="insurance-sub">Dealer zeigt ein Ass. Versicherung kostet die Hälfte des Einsatzes und zahlt 2:1.</div>
+      <div class="insurance-amount" id="insuranceAmount"></div>
+      <div class="insurance-btns">
+        <button class="ins-btn ins-yes" id="btnInsuranceYes">JA – Versichern</button>
+        <button class="ins-btn ins-no"  id="btnInsuranceNo">NEIN – Kein Risiko</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Win Popup Overlay -->
+  <div id="winPopup" class="win-popup" style="display:none">
+    <div class="win-popup-inner">
+      <div class="win-trophy">🏆</div>
+      <div class="win-title">GEWONNEN!</div>
+      <div class="win-amount" id="winAmount"></div>
+      <div class="win-sub">Klicken um fortzufahren</div>
+    </div>
+  </div>
+
+  <!-- BJ Win Popup -->
+  <div id="bjPopup" class="win-popup bj-popup" style="display:none">
+    <div class="win-popup-inner">
+      <div class="win-trophy">⭐</div>
+      <div class="win-title">BLACKJACK!</div>
+      <div class="win-amount" id="bjAmount"></div>
+      <div class="win-sub">3:2 Auszahlung</div>
+    </div>
+  </div>
+
+  <!-- Game Toast (push/lose) -->
+  <div id="gameToast" class="game-toast" style="display:none"></div>
 
 </div><!-- /game -->
 
