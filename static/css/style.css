@@ -3,7 +3,7 @@
    Casino dark theme · Red/Black · Gold accents
 ═══════════════════════════════════════════════════════════ */
 
-/* ── Reset & Base ────────────────────────────────────── */
+/* ── Reset & Base ────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -19,7 +19,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── CSS Variables ───────────────────────────────────── */
+/* ── CSS Variables ───────────────────────────────────────────── */
 :root {
   --gold:        #c8a035;
   --gold-light:  #f0c84a;
@@ -35,6 +35,7 @@ body {
   --radius-card: 8px;
   --topbar-h:    clamp(44px, 7vh, 60px);
   --bottom-h:    clamp(44px, 7vh, 56px);
+  /* Fluid font scale */
   --fs-xs:  clamp(8px,  1vw,   11px);
   --fs-sm:  clamp(9px,  1.1vw, 12px);
   --fs-md:  clamp(11px, 1.3vw, 14px);
@@ -43,6 +44,9 @@ body {
   --fs-2xl: clamp(20px, 2.6vw, 30px);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   ROTATE OVERLAY
+═══════════════════════════════════════════════════════════ */
 .rotate-overlay {
   display: none;
   position: fixed;
@@ -96,6 +100,9 @@ body {
   .rotate-overlay { display: none; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   GAME CONTAINER
+═══════════════════════════════════════════════════════════ */
 .game {
   position: relative;
   width: 100vw;
@@ -105,6 +112,9 @@ body {
   flex-direction: column;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   CASINO BACKGROUND
+═══════════════════════════════════════════════════════════ */
 .casino-bg {
   position: absolute;
   inset: 0;
@@ -119,6 +129,7 @@ body {
     radial-gradient(ellipse 80% 60% at 50% 20%, #2a0000 0%, #110000 45%, #050000 100%);
 }
 
+/* Left & Right panel groups */
 .bg-panel-group {
   position: absolute;
   top: 0;
@@ -150,6 +161,7 @@ body {
   border: 1px solid rgba(200,100,100,0.3);
 }
 
+/* Vertical light strips */
 .vlight {
   position: absolute;
   top: 5%;
@@ -164,6 +176,7 @@ body {
 .right-l1 { right: 10%; }
 .right-l2 { right: 20%; }
 
+/* Center back wall with sign -->*/
 .bg-center-panel {
   position: absolute;
   top: 0;
@@ -242,6 +255,9 @@ body {
   pointer-events: none;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════════════════════════ */
 .topbar {
   position: relative;
   z-index: 100;
@@ -311,6 +327,9 @@ body {
 
 .icon-btn:active { transform: scale(0.94); }
 
+/* ═══════════════════════════════════════════════════════════
+   DEALER FIGURE
+═══════════════════════════════════════════════════════════ */
 .dealer-figure-wrap {
   position: absolute;
   z-index: 2;
@@ -340,6 +359,9 @@ body {
   pointer-events: none;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════════════════════ */
 .table-scene {
   position: absolute;
   z-index: 3;
@@ -347,12 +369,14 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: clamp(600px, 96vw, 1600px);
+  /* Height chosen so it looks right in 16:9 */
   height: clamp(340px, 70vh, 720px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
+/* Outer red leather rim */
 .table-outer {
   width: 100%;
   height: 100%;
@@ -365,6 +389,7 @@ body {
   padding: clamp(10px, 1.8vh, 18px) clamp(10px, 1.8vh, 18px) 0;
 }
 
+/* Thin gold inner border */
 .table-gold-rim {
   width: 100%;
   height: 100%;
@@ -374,6 +399,7 @@ body {
   padding: clamp(4px, 0.8vh, 8px) clamp(4px, 0.8vh, 8px) 0;
 }
 
+/* Dark felt surface */
 .table-felt {
   width: 100%;
   height: 100%;
@@ -383,6 +409,7 @@ body {
   overflow: hidden;
 }
 
+/* ─── Card Shoes ───────────────────────────────────────────────────────── */
 .card-shoe {
   position: absolute;
   top: clamp(4%, 6%, 8%);
@@ -433,6 +460,7 @@ body {
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+/* ─── Table Text ───────────────────────────────────────────────────────── */
 .table-text {
   position: absolute;
   display: flex;
@@ -467,6 +495,7 @@ body {
   text-align: right;
 }
 
+/* ─── Game Content (centered column) ────────────────────────────────────────── */
 .game-content {
   position: absolute;
   inset: 0;
@@ -479,6 +508,7 @@ body {
   z-index: 10;
 }
 
+/* ─── Dealer Hand Area ────────────────────────────────────────────────────────── */
 .dealer-hand-area {
   display: flex;
   flex-direction: column;
@@ -500,6 +530,7 @@ body {
   text-transform: uppercase;
 }
 
+/* ─── Cards ───────────────────────────────────────────────────────────────────────── */
 .cards-container {
   display: flex;
   align-items: flex-end;
@@ -562,6 +593,7 @@ body {
 .card-red  { color: #cc1111; }
 .card-black { color: #111; }
 
+/* Face-down card */
 .card.face-down {
   background: linear-gradient(135deg, #8B0000 0%, #5a0000 100%);
   box-shadow: 2px 3px 10px rgba(0,0,0,0.7);
@@ -579,6 +611,7 @@ body {
   );
 }
 
+/* Card deal animation – slow, arc-in from above */
 @keyframes cardDeal {
   0%   { opacity: 0; transform: translateY(-55px) rotate(-8deg) scale(0.72); }
   55%  { opacity: 1; transform: translateY(5px)   rotate(1.5deg) scale(1.04); }
@@ -590,6 +623,7 @@ body {
   animation: cardDeal 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
+/* Hole-card flip reveal */
 @keyframes cardFlipReveal {
   0%   { transform: perspective(600px) rotateY(90deg) scale(0.88); opacity: 0.2; }
   55%  { transform: perspective(600px) rotateY(-14deg) scale(1.04); opacity: 1; }
@@ -601,6 +635,7 @@ body {
   animation: cardFlipReveal 0.52s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/* Score badge */
 .score-badge {
   min-width: clamp(28px, 3.5vw, 44px);
   height:    clamp(22px, 3vh, 32px);
@@ -621,6 +656,7 @@ body {
 .score-badge.bj   { border-color: var(--gold-light); color: var(--gold-light); box-shadow: 0 0 8px rgba(240,200,74,0.5); }
 .hidden-empty:empty { display: none; }
 
+/* ─── Action Buttons ───────────────────────────────────────────────────────────────── */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -656,6 +692,7 @@ body {
   letter-spacing: 0.06em;
 }
 
+/* Double – orange/gold */
 .btn-double {
   background: radial-gradient(circle at 35% 35%, #f0a030, #b07010);
   color: #fff;
@@ -666,6 +703,7 @@ body {
   box-shadow: 0 6px 22px rgba(200,140,0,0.7);
 }
 
+/* Hit – green */
 .btn-hit {
   background: radial-gradient(circle at 35% 35%, #2ecc52, #1a8a30);
   color: #fff;
@@ -676,6 +714,7 @@ body {
   box-shadow: 0 6px 22px rgba(30,180,70,0.7);
 }
 
+/* Stand – red */
 .btn-stand {
   background: radial-gradient(circle at 35% 35%, #e03030, #960000);
   color: #fff;
@@ -686,6 +725,7 @@ body {
   box-shadow: 0 6px 22px rgba(200,30,30,0.7);
 }
 
+/* Split – blue */
 .btn-split {
   background: radial-gradient(circle at 35% 35%, #3060cc, #1a3a88);
   color: #fff;
@@ -704,6 +744,7 @@ body {
   filter: grayscale(40%);
 }
 
+/* ─── Status Bar ─────────────────────────────────────────────────────────────────────── */
 .status-bar {
   width: clamp(200px, 40vw, 480px);
   height: clamp(32px, 5vh, 46px);
@@ -752,6 +793,7 @@ body {
 .flash-lose { animation: flashRed  0.55s ease; }
 .flash-push { animation: none; }
 
+/* ─── Player Hands Area ────────────────────────────────────────────────────────── */
 .player-hands-area {
   display: flex;
   gap: clamp(12px, 2vw, 24px);
@@ -779,6 +821,7 @@ body {
 
 .active-hand .hand-label { color: var(--gold-light); }
 
+/* ─── Side Bets + Bet Area Row ─────────────────────────────────────────────────── */
 .sidebets-area {
   display: flex;
   align-items: center;
@@ -831,6 +874,7 @@ body {
   cursor: default;
 }
 
+/* Side bet activate pulse */
 @keyframes sidebetPop {
   0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(200,160,53,0.8); }
   45%  { transform: scale(1.15); box-shadow: 0 0 0 9px rgba(200,160,53,0); }
@@ -838,6 +882,7 @@ body {
 }
 .sidebet-activate { animation: sidebetPop 0.38s ease; }
 
+/* ─── Bet Area ─────────────────────────────────────────────────────────────────────── */
 .bet-area {
   display: flex;
   flex-direction: column;
@@ -847,6 +892,7 @@ body {
   min-width: clamp(220px, 32vw, 380px);
 }
 
+/* Bet display row */
 .bet-display-wrap {
   display: flex;
   align-items: center;
@@ -884,6 +930,7 @@ body {
 .clear-bet-btn:hover:not(:disabled) { background: rgba(120,20,20,0.9); border-color: #ff4444; }
 .clear-bet-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* Chip Tray */
 .chip-tray {
   display: flex;
   align-items: center;
@@ -891,6 +938,7 @@ body {
   flex-wrap: nowrap;
 }
 
+/* Individual tray chip */
 .tray-chip {
   width:  clamp(36px, 5.5vw, 66px);
   height: clamp(36px, 5.5vw, 66px);
@@ -933,6 +981,7 @@ body {
 }
 .tray-chip:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
+/* Chip colors by denomination */
 .chip-c1   { background: radial-gradient(circle at 35% 30%, #e03333, #7a0000); border: 3px solid #ff6666; }
 .chip-c5   { background: radial-gradient(circle at 35% 30%, #3366dd, #1133aa); border: 3px solid #6699ff; }
 .chip-c25  { background: radial-gradient(circle at 35% 30%, #22aa44, #116622); border: 3px solid #55dd77; }
@@ -942,6 +991,7 @@ body {
 .chip-c500 { background: radial-gradient(circle at 35% 30%, #cc3333, #881111); border: 3px solid #ff9900; }
 .chip-c1k  { background: radial-gradient(circle at 35% 30%, #bb9900, #775500); border: 3px solid var(--gold-light); }
 
+/* Chip place animation */
 @keyframes chipPlace {
   0%   { transform: translateY(-18px) scale(1.2); opacity: 0.6; }
   60%  { transform: translateY(3px) scale(0.96); opacity: 1; }
@@ -950,6 +1000,7 @@ body {
 }
 .chip-place-anim { animation: chipPlace 0.32s cubic-bezier(0.22, 0.61, 0.36, 1); }
 
+/* Deal Button */
 .deal-btn {
   padding: clamp(8px, 1.2vh, 14px) clamp(24px, 4vw, 52px);
   border-radius: 8px;
@@ -972,6 +1023,7 @@ body {
 .deal-btn:active:not(:disabled) { transform: translateY(1px) scale(0.97); }
 .deal-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* ─── Insurance Modal ───────────────────────────────────────────────────────────────── */
 .insurance-modal {
   position: fixed;
   inset: 0;
@@ -1043,6 +1095,7 @@ body {
 .ins-no  { background: rgba(60,10,10,0.9); color: #ff9999; border: 1.5px solid rgba(200,60,60,0.5); }
 .ins-no:hover  { background: rgba(100,20,20,0.95); }
 
+/* ─── Win Popup ─────────────────────────────────────────────────────────────────────── */
 .win-popup {
   position: fixed;
   inset: 0;
@@ -1108,13 +1161,35 @@ body {
   letter-spacing: 0.06em;
 }
 
+/* Per-hand breakdown (win popup + toast) */
+.win-breakdown {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.bk-hand {
+  font-size: clamp(9px, 1.2vw, 13px);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.bk-win  { background: rgba(20,80,20,0.85); color: #88ff88; }
+.bk-lose { background: rgba(80,15,15,0.85); color: #ff8888; }
+.bk-push { background: rgba(20,20,80,0.85); color: #8899ff; }
+
+/* ─── Game Toast (push/lose) ─────────────────────────────────────────────────────────────── */
 .game-toast {
   position: fixed;
   z-index: 8500;
   top: calc(var(--topbar-h) + 12px);
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
-  padding: 8px 24px;
+  padding: 8px 20px;
   border-radius: 8px;
   font-size: clamp(12px, 1.8vw, 20px);
   font-weight: 900;
@@ -1122,7 +1197,25 @@ body {
   opacity: 0;
   transition: opacity 0.3s, transform 0.3s;
   pointer-events: none;
-  white-space: nowrap;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.toast-type { display: block; }
+
+.toast-net {
+  display: block;
+  font-size: 0.72em;
+  opacity: 0.88;
+  letter-spacing: 0.06em;
+}
+
+.toast-breakdown {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 5px;
 }
 .game-toast.show {
   opacity: 1;
@@ -1139,6 +1232,9 @@ body {
   color: #ff8888;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   BOTTOM PANELS
+═══════════════════════════════════════════════════════════ */
 .bottom-panels {
   position: absolute;
   z-index: 50;
@@ -1190,6 +1286,9 @@ body {
   white-space: nowrap;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   SIDE PANELS (Settings / Help)
+═══════════════════════════════════════════════════════════ */
 .side-panel {
   position: fixed;
   z-index: 200;
@@ -1268,6 +1367,7 @@ body {
   padding-bottom: 4px;
 }
 
+/* Toggle switch rows */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -1317,6 +1417,7 @@ body {
 .toggle-wrap input:checked + .toggle-slider { background: rgba(40,80,30,0.8); border-color: rgba(80,180,80,0.4); }
 .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(20px); background: #4caf50; }
 
+/* Strategy buttons */
 .strategy-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1345,6 +1446,7 @@ body {
   box-shadow: 0 0 8px rgba(200,160,53,0.3);
 }
 
+/* Inputs */
 .input-row {
   display: flex;
   align-items: center;
@@ -1371,6 +1473,7 @@ body {
 }
 .casino-input:focus { border-color: var(--gold); }
 
+/* Casino buttons */
 .casino-btn {
   padding: clamp(8px, 1vh, 12px) clamp(12px, 1.5vw, 18px);
   border-radius: 8px;
@@ -1391,6 +1494,7 @@ body {
 .btn-secondary { border-color: rgba(100,180,100,0.3); color: #88cc88; }
 .btn-secondary:hover { border-color: #44aa44; box-shadow: 0 0 10px rgba(50,180,50,0.3); }
 
+/* Deck selector */
 .deck-selector {
   display: flex;
   gap: 5px;
@@ -1424,6 +1528,7 @@ body {
   margin-top: 2px;
 }
 
+/* Help panel specifics */
 .help-section p { font-size: var(--fs-sm); color: #bbb; line-height: 1.6; }
 .help-dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: start; }
 .help-dl dt { display: flex; align-items: center; }
@@ -1444,6 +1549,9 @@ body {
 .tag-double { background: #5a3a00; color: #f0a030; }
 .tag-split  { background: #1a2a6a; color: #6688ff; }
 
+/* ═══════════════════════════════════════════════════════════
+   INFO PANELS (Counting / Probability / Learning)
+═══════════════════════════════════════════════════════════ */
 .info-panel {
   position: fixed;
   z-index: 150;
@@ -1490,8 +1598,10 @@ body {
 .count-value.positive { color: #66ee88; }
 .count-value.negative { color: #ff6666; }
 
+/* Probability panel */
 .prob-panel { left: auto; right: clamp(8px, 1.5vw, 16px); }
 
+/* Learning panel */
 .learn-panel {
   bottom: auto;
   top: calc(var(--topbar-h) + 8px);
@@ -1522,6 +1632,9 @@ body {
   line-height: 1.5;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════ */
 .toast {
   position: fixed;
   z-index: 9000;
@@ -1543,36 +1656,48 @@ body {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE – MOBILE LANDSCAPE  (max-height 500px)
+   Target: iPhone landscape, small Android landscape
+   Available height ≈ 300–420px after browser chrome
+═══════════════════════════════════════════════════════════ */
 @media (max-height: 500px) and (orientation: landscape) {
   :root {
     --topbar-h: 36px;
     --bottom-h: 32px;
   }
 
+  /* ── Dealer: smaller, pushed up behind table ── */
   .dealer-figure-wrap {
     width: clamp(70px, 9vw, 110px);
     top: calc(var(--topbar-h) - 4px);
   }
 
+  /* ── Table: fill available vertical space exactly ── */
   .table-scene {
     height: calc(100vh - var(--topbar-h) - var(--bottom-h) - 2px);
     bottom: var(--bottom-h);
+    /* override the large clamp minimum */
     min-height: 0;
   }
 
+  /* ── Table decorations: hide to save space + avoid clutter ── */
   .card-shoe   { display: none; }
   .table-text  { display: none; }
 
+  /* ── Game content: tight vertical stacking ── */
   .game-content {
     padding-top: 3px;
     gap: 3px;
     justify-content: flex-start;
   }
 
+  /* ── Hand labels ── */
   .hand-label { font-size: 7px; letter-spacing: 0.06em; }
   .hand-label-row { gap: 5px; }
   .dealer-hand-area { gap: 2px; }
 
+  /* ── Cards: noticeably smaller ── */
   .cards-container { min-height: 48px; gap: -2px; }
   .card {
     width:  clamp(34px, 5vw, 50px);
@@ -1589,6 +1714,7 @@ body {
     border-radius: 4px;
   }
 
+  /* ── Action buttons ── */
   .action-buttons { gap: clamp(8px, 1.4vw, 16px); }
   .action-btn {
     width:  clamp(40px, 6.2vw, 58px);
@@ -1597,11 +1723,14 @@ body {
   .btn-icon { font-size: clamp(16px, 2.4vw, 28px); }
   .btn-lbl  { font-size: 7px; letter-spacing: 0.02em; }
 
+  /* ── Status bar ── */
   .status-bar { height: 24px; width: clamp(160px, 38vw, 380px); }
   #statusText { font-size: 9px; letter-spacing: 0.06em; }
 
+  /* ── Player hands ── */
   .player-hands-area { gap: 10px; }
 
+  /* ── Side bets + chip row ── */
   .sidebets-area { gap: clamp(8px, 1.8vw, 22px); padding: 0 1%; }
   .sidebet {
     width:  clamp(36px, 5.5vw, 54px);
@@ -1609,6 +1738,7 @@ body {
   }
   .sidebet-label { font-size: 6.5px; line-height: 1.25; }
 
+  /* ── Chip Tray: reflow to top row, sidebets below ── */
   .sidebets-area {
     flex-wrap: wrap;
     gap: 4px;
@@ -1634,6 +1764,7 @@ body {
   .tray-chip::before { inset: 2px; }
   .deal-btn { padding: 4px 10px; font-size: 9px; letter-spacing: 0.08em; white-space: nowrap; flex-shrink: 0; }
 
+  /* ── Bottom panels ── */
   .bottom-panel {
     padding: 3px 10px;
     min-width: 90px;
@@ -1644,14 +1775,17 @@ body {
   .panel-icon    { width: 14px; height: 14px; }
   .panel-chevron { display: none; }
 
+  /* ── Background ── */
   .bg-panel-group { width: 18%; }
   .bg-octa { width: clamp(60px, 10vw, 110px); height: clamp(60px, 10vw, 110px); }
 
+  /* ── Side panels ── */
   .side-panel { width: clamp(240px, 42vw, 340px); }
   .info-panel { padding: 5px 10px; }
   .count-grid { gap: 2px 8px; }
   .learn-panel { top: calc(var(--topbar-h) + 4px); }
 
+  /* ── Title bar ── */
   .title-main   { font-size: clamp(12px, 2vw, 18px); }
   .title-limits { font-size: clamp(7px, 0.9vw, 10px); }
   .icon-btn {
@@ -1659,6 +1793,7 @@ body {
     height: clamp(28px, 4vw, 38px);
   }
 
+  /* ── Reduce table rim / padding so felt is taller ── */
   .table-outer {
     padding: 7px 7px 0;
     border-radius: 50% 50% 0 0 / 68% 68% 0 0;
@@ -1671,8 +1806,10 @@ body {
     border-radius: 50% 50% 0 0 / 68% 68% 0 0;
   }
 
+  /* ── Player hand: tighter vertical spacing ── */
   .player-hand { gap: 2px; }
 
+  /* ── Score badge next to cards instead of below ── */
   .player-hands-area .player-hand {
     flex-direction: row;
     flex-wrap: wrap;
@@ -1689,18 +1826,29 @@ body {
     margin-left: 4px;
   }
 
+  /* ── Table scene: never narrower than viewport ── */
   .table-scene { width: max(96vw, 300px); }
+
+  /* ── Breakdown chips: smaller on mobile ── */
+  .bk-hand { font-size: 7px; padding: 1px 5px; }
+  .win-breakdown { gap: 4px; margin-bottom: 5px; }
+  .toast-breakdown { gap: 3px; margin-top: 3px; }
 }
 
+/* Tablet landscape */
 @media (min-height: 500px) and (max-height: 768px) and (orientation: landscape) {
   .dealer-figure-wrap { width: clamp(100px, 13vw, 160px); }
   .table-scene { height: clamp(300px, 72vh, 600px); }
 }
 
+/* Large desktop */
 @media (min-width: 1800px) {
   :root { --topbar-h: 64px; --bottom-h: 60px; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR STYLE
+═══════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
