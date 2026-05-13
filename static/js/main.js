@@ -7,12 +7,12 @@ import { state, initGame, startDeal, playerHit, playerStand, playerDouble, playe
 import { renderAll, renderDealerHand, renderPlayerHands,
          animateChip, flashStatus, fmtEur } from './ui.js';
 
-// ─── Init ─────────────────────────────────────────────────────────────────────────────────
+// ─── Init ───────────────────────────────────────────────────────────────────────────────
 
 initGame();
 renderAll();
 
-// ─── Animation guard ───────────────────────────────────────────────────────────────────
+// ─── Animation guard ─────────────────────────────────────────────────────────────────────
 
 let isAnimating = false;
 
@@ -89,15 +89,33 @@ function playLoseSound() {
   } catch (_) {}
 }
 
-// ─── Win Popup / Game Toast ─────────────────────────────────────────────────────────
+// ─── Win Popup / Game Toast ─────────────────────────────────────────────────────────────────
 
 let _popupTimer = null;
 
-function showWinPopup(amount, isBJ = false) {
+function buildBreakdownHtml(results) {
+  return results.map((h, i) => {
+    const profit = h.win - h.bet;
+    const sign = profit >= 0 ? '+' : '';
+    const cls = profit > 0 ? 'bk-win' : profit < 0 ? 'bk-lose' : 'bk-push';
+    return `<span class="bk-hand ${cls}">H${i + 1}: ${sign}${fmtEur(profit)}</span>`;
+  }).join('');
+}
+
+function showWinPopup(net, isBJ = false, results = null) {
   const popup = document.getElementById(isBJ ? 'bjPopup' : 'winPopup');
   const amtEl = document.getElementById(isBJ ? 'bjAmount' : 'winAmount');
+  const brkEl = document.getElementById(isBJ ? 'bjBreakdown' : 'winBreakdown');
   if (!popup) return;
-  if (amtEl) amtEl.textContent = '+' + fmtEur(amount);
+  if (amtEl) amtEl.textContent = '+' + fmtEur(net);
+  if (brkEl) {
+    if (results && results.length > 1) {
+      brkEl.innerHTML = buildBreakdownHtml(results);
+      brkEl.style.display = 'flex';
+    } else {
+      brkEl.style.display = 'none';
+    }
+  }
   popup.style.display = 'flex';
   requestAnimationFrame(() => popup.classList.add('show'));
   if (_popupTimer) clearTimeout(_popupTimer);
@@ -111,12 +129,20 @@ function hideWinPopup(popup) {
   setTimeout(() => { popup.style.display = 'none'; }, 400);
 }
 
-function showGameToast(type) {
+function showGameToast(type, net = 0, results = null) {
   const el = document.getElementById('gameToast');
   if (!el) return;
   el.className = 'game-toast game-toast-' + type;
   const msgs = { push: 'UNENTSCHIEDEN', lose: 'DEALER GEWINNT', bust: 'BUST!', dealer_blackjack: 'DEALER BLACKJACK' };
-  el.textContent = msgs[type] || type.toUpperCase();
+  let html = `<span class="toast-type">${msgs[type] || type.toUpperCase()}</span>`;
+  if (net !== 0) {
+    const sign = net > 0 ? '+' : '';
+    html += `<span class="toast-net">${sign}${fmtEur(net)}</span>`;
+  }
+  if (results && results.length > 1) {
+    html += `<span class="toast-breakdown">${buildBreakdownHtml(results)}</span>`;
+  }
+  el.innerHTML = html;
   el.style.display = 'block';
   requestAnimationFrame(() => el.classList.add('show'));
   setTimeout(() => {
@@ -127,24 +153,23 @@ function showGameToast(type) {
 
 function showRoundResult() {
   if (!state.lastRoundResult?.length) return;
-  const r = state.lastRoundResult[0].result;
-  const win = state.lastRoundResult.reduce((a, b) => a + b.win, 0);
-  if (r === 'blackjack') {
-    showWinPopup(win, true); playWinSound(); flashStatus('win');
-  } else if (r === 'win') {
-    showWinPopup(win, false); playWinSound(); flashStatus('win');
-  } else if (r === 'push') {
-    showGameToast('push'); flashStatus('push');
-  } else if (r === 'bust') {
-    showGameToast('bust'); playLoseSound(); flashStatus('lose');
-  } else if (r === 'dealer_blackjack') {
-    showGameToast('dealer_blackjack'); playLoseSound(); flashStatus('lose');
+  const results = state.lastRoundResult;
+  const net = results.reduce((a, b) => a + (b.win - b.bet), 0);
+  const multi = results.length > 1 ? results : null;
+  const isSoloBJ = results.length === 1 && results[0].result === 'blackjack';
+  const allBust  = results.every(r => r.result === 'bust');
+
+  if (net > 0) {
+    showWinPopup(net, isSoloBJ, multi); playWinSound(); flashStatus('win');
+  } else if (net === 0) {
+    showGameToast('push', 0, multi); flashStatus('push');
   } else {
-    showGameToast('lose'); playLoseSound(); flashStatus('lose');
+    const type = allBust ? 'bust' : results[0].result === 'dealer_blackjack' ? 'dealer_blackjack' : 'lose';
+    showGameToast(type, net, multi); playLoseSound(); flashStatus('lose');
   }
 }
 
-// ─── Animation helpers ─────────────────────────────────────────────────────────────────
+// ─── Animation helpers ─────────────────────────────────────────────────────────────────────────
 
 function triggerHoleCardFlip() {
   const dealerCards = document.getElementById('dealerCards');
@@ -225,7 +250,7 @@ async function animateDealerTurn() {
   }
 }
 
-// ─── Chip Tray ───────────────────────────────────────────────────────────────────────
+// ─── Chip Tray ────────────────────────────────────────────────────────────────────────────────
 
 document.querySelectorAll('.tray-chip').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -260,7 +285,7 @@ function updateDealBtn() {
   btn.disabled = !canDeal;
 }
 
-// ─── Deal Button ──────────────────────────────────────────────────────────────────────
+// ─── Deal Button ──────────────────────────────────────────────────────────────────────────────
 
 document.getElementById('dealBtn').addEventListener('click', async () => {
   if (isAnimating) return;
@@ -307,7 +332,7 @@ document.getElementById('dealBtn').addEventListener('click', async () => {
   updateDealBtn();
 });
 
-// ─── Insurance Modal ────────────────────────────────────────────────────────────────
+// ─── Insurance Modal ────────────────────────────────────────────────────────────────────
 
 function showInsuranceModal() {
   const modal = document.getElementById('insuranceModal');
@@ -350,7 +375,7 @@ async function continuePlayerTurn() {
   }
 }
 
-// ─── Action Buttons ─────────────────────────────────────────────────────────────────
+// ─── Action Buttons ───────────────────────────────────────────────────────────────────────────
 
 document.getElementById('btnHit').addEventListener('click', async () => {
   if (isAnimating || state.phase !== 'player_turn') return;
@@ -407,7 +432,7 @@ document.getElementById('btnSplit').addEventListener('click', () => {
   playCardSound();
 });
 
-// ─── Side Bets ────────────────────────────────────────────────────────────────────────
+// ─── Side Bets ───────────────────────────────────────────────────────────────────────────────
 
 document.querySelectorAll('.sidebet').forEach(el => {
   el.addEventListener('click', () => {
@@ -422,7 +447,7 @@ document.querySelectorAll('.sidebet').forEach(el => {
   });
 });
 
-// ─── Settings Panel ─────────────────────────────────────────────────────────────────
+// ─── Settings Panel ─────────────────────────────────────────────────────────────────────────
 
 const settingsPanel = document.getElementById('settingsPanel');
 
@@ -511,7 +536,7 @@ document.getElementById('btnNewShoe').addEventListener('click', () => {
   showToast(`Neues Shoe: ${state.settings.numDecks} Deck${state.settings.numDecks > 1 ? 's' : ''} (${state.shoe.length} Karten)`);
 });
 
-// ─── Help Panel ──────────────────────────────────────────────────────────────────────
+// ─── Help Panel ─────────────────────────────────────────────────────────────────────────────
 
 const helpPanel = document.getElementById('helpPanel');
 
@@ -528,7 +553,7 @@ document.addEventListener('click', e => {
     helpPanel.classList.remove('open');
 });
 
-// ─── Sound Toggle ────────────────────────────────────────────────────────────────────
+// ─── Sound Toggle ─────────────────────────────────────────────────────────────────────────────
 
 document.getElementById('soundBtn').addEventListener('click', () => {
   state.settings.soundEnabled = !state.settings.soundEnabled;
@@ -537,7 +562,7 @@ document.getElementById('soundBtn').addEventListener('click', () => {
     : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
 });
 
-// ─── Refresh Button ─────────────────────────────────────────────────────────────────
+// ─── Refresh Button ───────────────────────────────────────────────────────────────────────
 
 document.getElementById('refreshBtn').addEventListener('click', () => {
   if (isAnimating) return;
@@ -552,7 +577,7 @@ document.getElementById('refreshBtn').addEventListener('click', () => {
   }
 });
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────────────────────
 
 function clearCards() {
   state.dealerHand = [];
