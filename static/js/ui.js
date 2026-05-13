@@ -42,16 +42,10 @@ export function renderDealerHand() {
   const scoreEl   = document.getElementById('dealerScore');
   if (!container) return;
 
-  // Only re-render if content changed (basic diffing by card count + hole visibility)
-  const key = `${state.dealerHand.length}-${state.dealerHoleVisible}`;
-  if (container.dataset.renderKey === key) return;
-  container.dataset.renderKey = key;
-
   container.innerHTML = '';
   state.dealerHand.forEach((card, i) => {
     const faceDown = i === 1 && !state.dealerHoleVisible;
     const el = createCardElement(card, faceDown);
-    el.style.setProperty('--i', i);
     el.classList.add('card-appear');
     container.appendChild(el);
   });
@@ -120,10 +114,11 @@ export function renderPlayerHands() {
 // ─── Status Bar ───────────────────────────────────────────────────────────────
 
 const PHASE_MSG = {
-  betting:     'PLACE YOUR BETS',
+  betting:     'PLATZIERE DEINEN EINSATZ',
   dealing:     'DEALING...',
-  player_turn: 'MAKE YOUR DECISION',
-  dealer_turn: "DEALER'S TURN...",
+  player_turn: 'DEINE ENTSCHEIDUNG',
+  insurance:   'VERSICHERUNG ANGEBOTEN',
+  dealer_turn: "DEALER AM ZUG...",
   round_over:  ''
 };
 
@@ -160,6 +155,9 @@ export function updateButtons() {
   setBtn('btnStand',  !isPlay);
   setBtn('btnDouble', !isPlay || !canDouble());
   setBtn('btnSplit',  !isPlay || !canSplit());
+  // Hide action buttons entirely when not in player turn
+  const ab = document.getElementById('actionButtons');
+  if (ab) ab.style.opacity = isPlay ? '1' : '0.4';
 }
 
 function setBtn(id, disabled) {
@@ -170,22 +168,31 @@ function setBtn(id, disabled) {
 // ─── Bet Area ─────────────────────────────────────────────────────────────────
 
 export function updateBetArea() {
-  const isBetting = state.phase === 'betting';
-  const fmt = fmtEur(state.currentBet);
+  const isBettingPhase = state.phase === 'betting' || state.phase === 'round_over';
 
-  setText('chipAmount',  fmt);
-  setText('betAmount',   fmtEur(state.currentBet));
+  setText('betAmount', fmtEur(state.currentBet));
 
-  const chip = document.getElementById('mainChip');
-  if (chip) {
-    chip.classList.toggle('clickable', isBetting || state.phase === 'round_over');
-    chip.title = isBetting ? 'Klicken um auszuteilen' : state.phase === 'round_over' ? 'Neue Runde' : '';
+  const chipTray = document.getElementById('chipTray');
+  if (chipTray) {
+    chipTray.querySelectorAll('.tray-chip').forEach(btn => {
+      const amount = parseFloat(btn.dataset.amount);
+      btn.disabled = !isBettingPhase || state.currentBet + amount > state.balance;
+    });
   }
 
-  const dec = document.getElementById('decreaseBet');
-  const inc = document.getElementById('increaseBet');
-  if (dec) dec.disabled = !isBetting;
-  if (inc) inc.disabled = !isBetting;
+  const clearBtn = document.getElementById('clearBetBtn');
+  if (clearBtn) clearBtn.disabled = !isBettingPhase || state.currentBet === 0;
+
+  const dealBtn = document.getElementById('dealBtn');
+  if (dealBtn) {
+    if (state.phase === 'round_over') {
+      dealBtn.textContent = 'NEUE RUNDE';
+      dealBtn.disabled = false;
+    } else {
+      dealBtn.textContent = 'DEAL';
+      dealBtn.disabled = !isBettingPhase || state.currentBet < state.minBet;
+    }
+  }
 }
 
 // ─── Panels ───────────────────────────────────────────────────────────────────

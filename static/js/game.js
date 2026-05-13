@@ -1,6 +1,6 @@
 // game.js – Central game state and all game logic
 
-import { createShoe, dealCard, getHandValue, isBlackjack, isBust, isPair } from './deck.js';
+import { createShoe, dealCard, getHandValue, isBlackjack, isPair } from './deck.js';
 import { updateCount, resetCount, calcTrueCount } from './counting.js';
 import { evaluateAllSideBets } from './sidebets.js';
 import { getNextBet, clamp } from './betting.js';
@@ -14,17 +14,20 @@ export const state = {
 
   playerHands: [[]],
   activeHandIndex: 0,
-  handBets: [10],
+  handBets: [0],
 
-  phase: 'betting', // betting | dealing | player_turn | dealer_turn | round_over
+  phase: 'betting', // betting | dealing | player_turn | insurance | dealer_turn | round_over
 
   balance: 1000,
-  currentBet: 10,
+  currentBet: 0,
   baseBet: 10,
-  minBet: 2.5,
+  minBet: 1,
   maxBet: 25000,
   lastWin: 0,
   sideBetAmount: 5,
+
+  insuranceBet: 0,
+  insurancePending: false,
 
   selectedSideBets: {
     twentyOnePlusThree: false,
@@ -72,6 +75,7 @@ function calcActiveSideBets() {
 
 export function startDeal() {
   if (state.phase !== 'betting') return false;
+  if (state.currentBet < state.minBet) return false;
   const totalCost = state.currentBet + calcActiveSideBets();
   if (totalCost > state.balance) return false;
 
@@ -107,6 +111,13 @@ export function startDeal() {
   if (playerBJ || dealerBJ) {
     revealHoleCard();
     endRound();
+    return true;
+  }
+
+  // Insurance: dealer shows an Ace
+  if (state.dealerHand[0].rank === 'A') {
+    state.insurancePending = true;
+    state.phase = 'insurance';
     return true;
   }
 
@@ -176,27 +187,37 @@ function advanceOrEndPlayerTurn() {
     state.activeHandIndex++;
   } else {
     revealHoleCard();
-    runDealerTurn();
+    state.phase = 'dealer_turn'; // UI handles animated dealer turn via dealerDrawOne()
   }
 }
 
 function revealHoleCard() {
   state.dealerHoleVisible = true;
-  // Now count the hole card
   updateCount(state, state.dealerHand[1]);
 }
 
-function runDealerTurn() {
-  state.phase = 'dealer_turn';
-  let dv = getHandValue(state.dealerHand);
-  while (dv < 17) {
-    const card = dealCard(state.shoe);
-    if (!card) break;
-    state.dealerHand.push(card);
-    updateCount(state, card);
-    dv = getHandValue(state.dealerHand);
+// Called once after hole card is revealed — ends round immediately if dealer already stands
+export function startDealerPlay() {
+  if (state.phase !== 'dealer_turn') return false;
+  if (getHandValue(state.dealerHand) >= 17) {
+    endRound();
+    return false;
   }
-  endRound();
+  return true;
+}
+
+// Draws one dealer card; returns true if dealer still needs more cards
+export function dealerDrawOne() {
+  if (state.phase !== 'dealer_turn') return false;
+  const card = dealCard(state.shoe);
+  if (!card) { endRound(); return false; }
+  state.dealerHand.push(card);
+  updateCount(state, card);
+  if (getHandValue(state.dealerHand) >= 17) {
+    endRound();
+    return false;
+  }
+  return true;
 }
 
 function endRound() {
@@ -251,6 +272,15 @@ function endRound() {
     results.push({ result, win, handValue: hv, bet });
   }
 
+  // Insurance payout: 2:1 if dealer has BJ
+  if (state.insuranceBet > 0) {
+    if (dealerBJ) {
+      totalWin += state.insuranceBet * 3; // stake back + 2:1 win
+      state.balance += state.insuranceBet * 3;
+    }
+    state.insuranceBet = 0;
+  }
+
   // Side bets evaluated on top of main result
   const sideBetWin = evaluateAllSideBets(state);
   if (sideBetWin > 0) {
@@ -273,6 +303,36 @@ function endRound() {
   state.currentBet = clamp(state.currentBet, state.minBet, Math.min(state.maxBet, state.balance));
 }
 
+export function addToBet(amount) {
+  if (state.phase !== 'betting' && state.phase !== 'round_over') return false;
+  if (state.currentBet + amount > state.balance) return false;
+  if (state.currentBet + amount > state.maxBet) return false;
+  state.currentBet += amount;
+  return true;
+}
+
+export function clearBet() {
+  if (state.phase !== 'betting' && state.phase !== 'round_over') return;
+  state.currentBet = 0;
+}
+
+export function takeInsurance() {
+  if (state.phase !== 'insurance') return;
+  const insAmt = Math.floor(state.handBets[0] / 2);
+  if (state.balance < insAmt) return;
+  state.insuranceBet = insAmt;
+  state.balance -= insAmt;
+  state.insurancePending = false;
+  state.phase = 'player_turn';
+}
+
+export function declineInsurance() {
+  if (state.phase !== 'insurance') return;
+  state.insuranceBet = 0;
+  state.insurancePending = false;
+  state.phase = 'player_turn';
+}
+
 export function changeBet(delta) {
   if (state.phase !== 'betting') return;
   const steps = [2.5, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000];
@@ -291,7 +351,7 @@ export function toggleSideBet(name) {
 
 export function resetGame() {
   state.balance = 1000;
-  state.currentBet = 10;
+  state.currentBet = 0;
   state.baseBet = 10;
   state.lastWin = 0;
   state.phase = 'betting';
@@ -300,6 +360,8 @@ export function resetGame() {
   state.dealerHand = [];
   state.playerHands = [[]];
   state.dealerHoleVisible = false;
+  state.insuranceBet = 0;
+  state.insurancePending = false;
   state.selectedSideBets = { twentyOnePlusThree: false, bustBonus: false, perfectPairs: false, crazySeven: false };
   initGame();
 }
